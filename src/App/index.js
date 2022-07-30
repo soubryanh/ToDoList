@@ -1,10 +1,6 @@
-// import "./App.css";
 import React from "react";
-import { ToDoCounter } from "./ToDoCounter";
-import { ToDoList } from "./ToDoList";
-import { ToDoSearch } from "./ToDoSearch";
-import { ToDoItem } from "./ToDoItem";
-import { CreateToDoButton } from "./CreateToDoButton";
+import { AppUI } from "./AppUI";
+
 const allDefault = [
   { text: "Glosery", completed: false },
   { text: "Bananas", completed: true },
@@ -49,25 +45,15 @@ function App() {
   // Usar el método split to delete an item directly in the array 'newToDos', sin entrar al index
 
   return (
-    // Components
-    <React.Fragment>
-      <ToDoCounter total={totalToDos} completed={completedToDos} />
-      <ToDoSearch searchValue={searchValue} setSearchValue={setSearchValue} />
-
-      <ToDoList>
-        {searchedToDos.map((all) => (
-          <ToDoItem
-            key={all.text}
-            text={all.text}
-            completed={all.completed}
-            onComplete={() => completeToDo(all.text)}
-            onDelete={() => deleteToDo(all.text)}
-          />
-        ))}
-      </ToDoList>
-
-      <CreateToDoButton />
-    </React.Fragment>
+    <AppUI
+      totalToDos={totalToDos}
+      completedToDos={completedToDos}
+      searchValue={searchValue}
+      setSearchValue={setSearchValue}
+      searchedToDos={searchedToDos}
+      completeToDo={completeToDo}
+      deleteToDo={deleteToDo}
+    />
   );
 }
 
