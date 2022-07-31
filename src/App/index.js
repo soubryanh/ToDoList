@@ -1,14 +1,36 @@
 import React from "react";
 import { AppUI } from "./AppUI";
 
-const allDefault = [
-  { text: "Glosery", completed: false },
-  { text: "Bananas", completed: true },
-  { text: "Pear", completed: true },
-];
+// const allDefault = [
+//   { text: "Glosery", completed: false },
+//   { text: "Bananas", completed: true },
+//   { text: "Pear", completed: true },
+// ];
+// 👇Hook personalizado que recolecta info de LocalStorage
+function useLocalStorage(ItemName, initialValue) {
+  const localStorageItem = localStorage.getItem(ItemName);
+  let parsedItem;
+
+  if (!localStorageItem) {
+    localStorage.setItem(ItemName, JSON.stringify(initialValue));
+    parsedItem = initialValue;
+  } else {
+    parsedItem = JSON.parse(localStorageItem); // JSON.parse() convierte un texto a objeto
+  }
+  const [item, setIteam] = React.useState(parsedItem); // this is a state, array-Hooks
+
+  const saveItem = (newIteam) => {
+    const stringIteam = JSON.stringify(newIteam);
+    localStorage.setItem(ItemName, stringIteam);
+    setIteam(newIteam);
+  };
+
+  return [item, saveItem];
+}
 
 function App() {
-  const [toDos, setToDos] = React.useState(allDefault); // this is a state, array
+  const [toDos, saveToDos] = useLocalStorage("toDos_v1", []);
+
   const [searchValue, setSearchValue] = React.useState("");
 
   const completedToDos = toDos.filter((toDo) => !!toDo.completed).length; // !! is double negative that means, positive/true
@@ -35,14 +57,14 @@ function App() {
     const newToDos = [...toDos];
     // newToDos[toDoIndex].completed = true;
     newToDos[toDoIndex].completed = !newToDos[toDoIndex].completed;
-    setToDos(newToDos);
+    saveToDos(newToDos);
   };
 
   const deleteToDo = (text) => {
     const toDoIndex = toDos.findIndex((toDo) => toDo.text === text);
     const newToDos = [...toDos];
     newToDos.splice(toDoIndex, 1);
-    setToDos(newToDos);
+    saveToDos(newToDos);
   };
 
   //Función Busca el item que coinside con el mismo texto entre los arrays y cambia el estado a completado para subrayar la tarea.
