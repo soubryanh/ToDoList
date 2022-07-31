@@ -8,28 +8,57 @@ import { AppUI } from "./AppUI";
 // ];
 // 👇Hook personalizado que recolecta info de LocalStorage
 function useLocalStorage(ItemName, initialValue) {
-  const localStorageItem = localStorage.getItem(ItemName);
-  let parsedItem;
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
+  const [item, setIteam] = React.useState(initialValue); // this is a state, array-Hooks
 
-  if (!localStorageItem) {
-    localStorage.setItem(ItemName, JSON.stringify(initialValue));
-    parsedItem = initialValue;
-  } else {
-    parsedItem = JSON.parse(localStorageItem); // JSON.parse() convierte un texto a objeto
-  }
-  const [item, setIteam] = React.useState(parsedItem); // this is a state, array-Hooks
+  React.useEffect(() => {
+    setTimeout(() => {
+      try {
+        const localStorageItem = localStorage.getItem(ItemName);
+        let parsedItem;
+
+        if (!localStorageItem) {
+          localStorage.setItem(ItemName, JSON.stringify(initialValue));
+          parsedItem = initialValue;
+        } else {
+          parsedItem = JSON.parse(localStorageItem); // JSON.parse() convierte un texto a objeto
+        }
+
+        setIteam(parsedItem);
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+      }
+    }, 1000);
+  }, []);
 
   const saveItem = (newIteam) => {
-    const stringIteam = JSON.stringify(newIteam);
-    localStorage.setItem(ItemName, stringIteam);
-    setIteam(newIteam);
+    try {
+      const stringIteam = JSON.stringify(newIteam);
+      localStorage.setItem(ItemName, stringIteam);
+      setIteam(newIteam);
+    } catch (error) {
+      setError(error);
+    }
   };
 
-  return [item, saveItem];
+  return {
+    item,
+    saveItem,
+    loading,
+    error,
+  };
+  // cuando se aumentan los parametros de un hook o estado se recomienda trabajar con objetos y no con arrays.
 }
 
 function App() {
-  const [toDos, saveToDos] = useLocalStorage("toDos_v1", []);
+  const {
+    item: toDos,
+    saveItem: saveToDos,
+    loading,
+    error,
+  } = useLocalStorage("toDos_v1", []);
 
   const [searchValue, setSearchValue] = React.useState("");
 
@@ -66,12 +95,14 @@ function App() {
     newToDos.splice(toDoIndex, 1);
     saveToDos(newToDos);
   };
-
   //Función Busca el item que coinside con el mismo texto entre los arrays y cambia el estado a completado para subrayar la tarea.
   // Usar el método split to delete an item directly in the array 'newToDos', sin entrar al index
 
+  // useEffect is apply to manage posible error on loading
   return (
     <AppUI
+      loading={loading}
+      error={error}
       totalToDos={totalToDos}
       completedToDos={completedToDos}
       searchValue={searchValue}
