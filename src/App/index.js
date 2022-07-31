@@ -10,13 +10,15 @@ const allDefault = [
 function App() {
   const [toDos, setToDos] = React.useState(allDefault); // this is a state, array
   const [searchValue, setSearchValue] = React.useState("");
+
   const completedToDos = toDos.filter((toDo) => !!toDo.completed).length; // !! is double negative that means, positive/true
   // aquí se busca la cantidad de toDos marcados como completados.
   const totalToDos = toDos.length;
+
   let searchedToDos = [];
 
   if (!searchValue.length >= 1) {
-    searchedToDos = allDefault;
+    searchedToDos = toDos;
   } else {
     searchedToDos = toDos.filter((toDo) => {
       const toDoText = toDo.text.toLowerCase();
@@ -36,12 +38,14 @@ function App() {
     setToDos(newToDos);
   };
 
-  //Función Busca el item que coinside con el mismo texto entre los arrays y cambia el estado a completado para subrayar la tarea.
-
   const deleteToDo = (text) => {
-    const newToDos = toDos.filter((toDo) => toDo.text !== text);
+    const toDoIndex = toDos.findIndex((toDo) => toDo.text === text);
+    const newToDos = [...toDos];
+    newToDos.splice(toDoIndex, 1);
     setToDos(newToDos);
   };
+
+  //Función Busca el item que coinside con el mismo texto entre los arrays y cambia el estado a completado para subrayar la tarea.
   // Usar el método split to delete an item directly in the array 'newToDos', sin entrar al index
 
   return (
