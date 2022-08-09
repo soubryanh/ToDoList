@@ -13,6 +13,8 @@ function ToDoProvider(props) {
 
   const [searchValue, setSearchValue] = React.useState("");
 
+  const [openModal, setOpenModal] = React.useState(false);
+
   const completedToDos = toDos.filter((toDo) => !!toDo.completed).length; // !! is double negative that means, positive/true
   // aquí se busca la cantidad de toDos marcados como completados.
   const totalToDos = toDos.length;
@@ -40,6 +42,14 @@ function ToDoProvider(props) {
     saveToDos(newToDos);
   };
 
+  const addToDo = (text) => {
+    const newToDos = [...toDos];
+    newToDos.push({
+      completed: false,
+      text,
+    });
+    saveToDos(newToDos);
+  };
   const deleteToDo = (text) => {
     const toDoIndex = toDos.findIndex((toDo) => toDo.text === text);
     const newToDos = [...toDos];
@@ -63,6 +73,9 @@ function ToDoProvider(props) {
         searchedToDos,
         completeToDo,
         deleteToDo,
+        setOpenModal,
+        openModal,
+        addToDo,
       }}
     >
       {" "}
