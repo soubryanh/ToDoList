@@ -7,6 +7,9 @@ import { CreateToDoButton } from "../CreateToDoButton";
 import { ToDoContext } from "../toDoContext";
 import { Modal } from "../Modal";
 import { ToDoForm } from "../ToDoForm";
+import { ToDosError } from "../ToDosError";
+import { ToDosLoading } from "../ToDosLoading";
+import { EmptyToDos } from "../EmptyTodos";
 
 function AppUI() {
   const {
@@ -25,9 +28,10 @@ function AppUI() {
       <ToDoCounter />
       <ToDoSearch />
       <ToDoList>
-        {error && <p>Todo mal</p>}
-        {loading && <p>Ahí vamos!</p>}
-        {!loading && !searchedToDos.lenght && <p>Deu certo</p>}
+        {error && <ToDosError error={error} />}
+        {loading && <ToDosLoading />}
+        {loading && <ToDosLoading />}
+        {!loading && !searchedToDos.lenght && <EmptyToDos />}
         {searchedToDos.map((all) => (
           <ToDoItem
             key={all.text}
